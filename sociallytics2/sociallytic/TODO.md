@@ -1,0 +1,5 @@
+- [ ] 1) Diagnose punca potong: pastikan HTML nesting dalam `dashboard.html` untuk dashboard overview ditutup betul sebelum `analyticsPage/contentPage/.../reportsPage/settingsPage`
+- [ ] 2) Edit `dashboard.html` untuk betulkan tag penutup `</div>` dan `</section>` yang tidak sepadan
+- [ ] 3) Simpan perubahan
+- [ ] 4) Jalankan quick check (buka browser / verify klik Reports & Settings)
+- [ ] 5) Jika masih terpotong, adjust class overflow/height pada wrapper pages

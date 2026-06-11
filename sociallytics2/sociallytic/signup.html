@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sociallytic - Sign Up</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      color: #0f172a;
+    }
+
+    .purple-gradient {
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+    }
+
+    .soft-box {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(16px);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-slate-50/50 antialiased">
+
+  <div class="min-h-screen grid lg:grid-cols-2">
+
+    <div class="bg-white flex justify-center items-center px-6 sm:px-12 py-12 shadow-xs z-10">
+
+      <div class="w-full max-w-md">
+
+        <a href="index.html" class="flex items-center gap-2.5 mb-8 group inline-flex">
+          <div class="w-10 h-10 purple-gradient rounded-xl flex items-center justify-center text-white shadow-md shadow-purple-100 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-chart-pie text-lg"></i>
+          </div>
+          <span class="font-black text-xl tracking-tight bg-gradient-to-r from-slate-900 to-purple-900 bg-clip-text text-transparent">Sociallytic</span>
+        </a>
+
+        <h1 class="text-3xl font-black text-slate-900 tracking-tight mb-2">Create your account</h1>
+        <p class="text-slate-400 text-sm font-medium mb-8">Get started with your free 14-day trial today</p>
+
+        <form id="signupForm" class="space-y-4">
+
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Full Name</label>
+            <div class="relative">
+              <i class="fa-regular fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input
+                id="fullName"
+                type="text"
+                placeholder="John Doe"
+                class="w-full border border-slate-200 rounded-xl py-3.5 pl-11 pr-4 text-sm outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-50/50 transition-all font-medium"
+              >
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Email address</label>
+            <div class="relative">
+              <i class="fa-regular fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input
+                id="email"
+                type="email"
+                placeholder="name@company.com"
+                class="w-full border border-slate-200 rounded-xl py-3.5 pl-11 pr-4 text-sm outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-50/50 transition-all font-medium"
+              >
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Password</label>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input
+                id="password"
+                type="password"
+                placeholder="Choose a strong password"
+                class="w-full border border-slate-200 rounded-xl py-3.5 pl-11 pr-11 text-sm outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-50/50 transition-all font-medium"
+              >
+              <button type="button" onclick="togglePassword('password', 'eyeIcon1')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                <i id="eyeIcon1" class="fa-regular fa-eye text-sm"></i>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Confirm Password</label>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input
+                id="confirmPassword"
+                type="password"
+                placeholder="Repeat your password"
+                class="w-full border border-slate-200 rounded-xl py-3.5 pl-11 pr-11 text-sm outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-50/50 transition-all font-medium"
+              >
+              <button type="button" onclick="togglePassword('confirmPassword', 'eyeIcon2')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                <i id="eyeIcon2" class="fa-regular fa-eye text-sm"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <label class="flex items-start gap-3 text-xs font-semibold text-slate-600 cursor-pointer select-none">
+              <input id="terms" type="checkbox" class="w-4 h-4 rounded mt-0.5 border-slate-300 text-purple-600 focus:ring-purple-500 accent-purple-600">
+              <span class="leading-relaxed">
+                I agree to the
+                <a href="#" class="text-purple-600 hover:text-purple-700 transition-colors">Terms of Service</a>
+                and
+                <a href="#" class="text-purple-600 hover:text-purple-700 transition-colors">Privacy Policy</a>
+              </span>
+            </label>
+          </div>
+
+          <button type="submit" class="w-full purple-gradient text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-purple-100 hover:opacity-95 transition-all flex items-center justify-center gap-2 pt-3 active:scale-[0.99]">
+            Create Account
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+
+        </form>
+
+        <p class="text-center text-slate-500 text-sm font-medium mt-8">
+          Already have an account?
+          <a href="login.html" class="text-purple-600 font-bold hover:text-purple-700 transition-colors ml-1">Sign in</a>
+        </p>
+
+      </div>
+    </div>
+
+    <div class="hidden lg:flex purple-gradient text-white px-16 py-14 items-center relative overflow-hidden">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent opacity-50"></div>
+
+      <div class="max-w-xl relative z-10">
+
+        <div class="inline-flex items-center gap-2 bg-white/10 border border-white/10 px-4 py-1.5 rounded-full text-xs font-bold mb-8">
+          <i class="fa-solid fa-rocket animate-pulse"></i>
+          Join 50,000+ scaling marketers
+        </div>
+
+        <h2 class="text-4xl lg:text-5xl font-black tracking-tight leading-[1.15] mb-6">
+          Start Your Free 14-Day Trial Today
+        </h2>
+
+        <p class="text-purple-100 text-base leading-relaxed mb-10 font-medium">
+          No credit card required. Unlock total access to live multi-channel automation pipelines, analytics summaries, and predictive optimization layers immediately.
+        </p>
+
+        <div class="space-y-4 mb-12">
+
+          <div class="flex items-center gap-3.5 font-semibold text-sm">
+            <div class="w-7 h-7 bg-white text-purple-600 rounded-full flex items-center justify-center border border-white/10 shrink-0 shadow-sm">
+              <i class="fa-solid fa-check text-xs"></i>
+            </div>
+            <p>Connect unlimited social media channel endpoints</p>
+          </div>
+
+          <div class="flex items-center gap-3.5 font-semibold text-sm">
+            <div class="w-7 h-7 bg-white text-purple-600 rounded-full flex items-center justify-center border border-white/10 shrink-0 shadow-sm">
+              <i class="fa-solid fa-check text-xs"></i>
+            </div>
+            <p>AI-driven predictive timeline suggestions</p>
+          </div>
+
+          <div class="flex items-center gap-3.5 font-semibold text-sm">
+            <div class="w-7 h-7 bg-white text-purple-600 rounded-full flex items-center justify-center border border-white/10 shrink-0 shadow-sm">
+              <i class="fa-solid fa-check text-xs"></i>
+            </div>
+            <p>Real-time dataset mapping and automated reports center</p>
+          </div>
+
+          <div class="flex items-center gap-3.5 font-semibold text-sm">
+            <div class="w-7 h-7 bg-white text-purple-600 rounded-full flex items-center justify-center border border-white/10 shrink-0 shadow-sm">
+              <i class="fa-solid fa-check text-xs"></i>
+            </div>
+            <p>Premium 24/7 priority customer support line</p>
+          </div>
+
+        </div>
+
+        <div class="grid grid-cols-3 gap-6 border-t border-white/10 pt-8">
+          <div>
+            <h3 class="text-2xl font-black text-white">50K+</h3>
+            <p class="text-purple-200/70 text-xs font-semibold mt-0.5">Active Marketers</p>
+          </div>
+
+          <div>
+            <h3 class="text-2xl font-black text-white">2M+</h3>
+            <p class="text-purple-200/70 text-xs font-semibold mt-0.5">Feeds Analyzed</p>
+          </div>
+
+          <div>
+            <h3 class="text-2xl font-black text-white">99.9%</h3>
+            <p class="text-purple-200/70 text-xs font-semibold mt-0.5">Core API Uptime</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const signupForm = document.getElementById("signupForm");
+
+    signupForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const fullName = document.getElementById("fullName").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const confirmPassword = document.getElementById("confirmPassword").value.trim();
+      const terms = document.getElementById("terms").checked;
+
+      if (fullName === "" || email === "" || password === "" || confirmPassword === "") {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      if (password.length < 6) {
+        alert("Password must be at least 6 characters.");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        alert("Password and confirm password do not match.");
+        return;
+      }
+
+      if (!terms) {
+        alert("Please agree to the Terms of Service and Privacy Policy.");
+        return;
+      }
+
+      registerUser(fullName, email, password);
+    });
+
+    function togglePassword(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      }
+    }
+
+    function socialSignup(platform) {
+      alert(platform + " handshake registration selected.");
+      window.location.href = "index.html";
+    }
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhAW-bYH2zbc8ceA1R4GEYXsuQA9pMDkg",
+      authDomain: "sociallytics-3cda3.firebaseapp.com",
+      projectId: "sociallytics-3cda3",
+      storageBucket: "sociallytics-3cda3.firebasestorage.app",
+      messagingSenderId: "781655894147",
+      appId: "1:781655894147:web:280397e6526f62e995d3b6",
+      measurementId: "G-BW15B45JVW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.registerUser = async function(fullName, email, password) {
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        localStorage.setItem("userName", fullName);
+        alert("Account created successfully!");
+        window.location.href = "login.html";
+      } catch(error) {
+        console.error("Register error:", error.message);
+        alert(error.message);
+      }
+    };
+  </script>
+
+</body>
+</html>

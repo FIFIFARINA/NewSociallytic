@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sociallytic - Login</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      color: #0f172a;
+    }
+
+    .purple-gradient {
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+    }
+
+    .soft-box {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(16px);
+      transition: all 0.3s ease;
+    }
+    
+    .soft-box:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-slate-50/50 antialiased">
+
+  <div class="min-h-screen grid lg:grid-cols-2">
+
+    <div class="bg-white flex justify-center items-center px-6 sm:px-12 py-12 shadow-xs z-10">
+
+      <div class="w-full max-w-md">
+
+        <a href="index.html" class="flex items-center gap-2.5 mb-8 group inline-flex">
+          <div class="w-10 h-10 purple-gradient rounded-xl flex items-center justify-center text-white shadow-md shadow-purple-100 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-chart-pie text-lg"></i>
+          </div>
+          <span class="font-black text-xl tracking-tight bg-gradient-to-r from-slate-900 to-purple-900 bg-clip-text text-transparent">Sociallytic</span>
+        </a>
+
+        <h1 class="text-3xl font-black text-slate-900 tracking-tight mb-2">Welcome back</h1>
+        <p class="text-slate-400 text-sm font-medium mb-8">Sign in to your account to continue performance tracking</p>
+
+        <form id="loginForm" class="space-y-5">
+
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Email address</label>
+            <div class="relative">
+              <i class="fa-regular fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input 
+                id="email"
+                type="email"
+                placeholder="name@company.com"
+                class="w-full border border-slate-200 rounded-xl py-3.5 pl-11 pr-4 text-sm outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-50/50 transition-all font-medium"
+              >
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Password</label>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input 
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                class="w-full border border-slate-200 rounded-xl py-3.5 pl-11 pr-11 text-sm outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-50/50 transition-all font-medium"
+              >
+              <button type="button" onclick="togglePassword()" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                <i id="eyeIcon" class="fa-regular fa-eye text-sm"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center text-xs font-bold">
+            <label class="flex items-center gap-2 text-slate-600 cursor-pointer select-none">
+              <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 accent-purple-600">
+              Remember me
+            </label>
+
+            <a href="#" onclick="forgotPassword()" class="text-purple-600 hover:text-purple-700 transition-colors">
+              Forgot password?
+            </a>
+          </div>
+
+          <button type="submit" class="w-full purple-gradient text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-purple-100 hover:opacity-95 transition-all flex items-center justify-center gap-2 active:scale-[0.99]">
+            Sign in
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+
+        </form>
+
+        <p class="text-center text-slate-500 text-sm font-medium mt-8">
+          Don't have an account?
+          <a href="signup.html" class="text-purple-600 font-bold hover:text-purple-700 transition-colors ml-1">Sign up for free</a>
+        </p>
+
+      </div>
+    </div>
+
+    <div class="hidden lg:flex purple-gradient text-white px-16 py-14 items-center relative overflow-hidden">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent opacity-50"></div>
+
+      <div class="max-w-xl relative z-10">
+
+        <div class="inline-flex items-center gap-2 bg-white/10 border border-white/10 px-4 py-1.5 rounded-full text-xs font-bold mb-8">
+          <i class="fa-solid fa-chart-line"></i>
+          Empowering 50,000+ digital entrepreneurs
+        </div>
+
+        <h2 class="text-4xl lg:text-5xl font-black tracking-tight leading-[1.15] mb-6">
+          Track Your Social Performance Seamlessly
+        </h2>
+
+        <p class="text-purple-100 text-base leading-relaxed mb-10 font-medium">
+          Extract advanced predictive data, observe daily multi-channel interaction changes, and scale your content engine using a clean SaaS pipeline framework.
+        </p>
+
+        <div class="space-y-4">
+
+          <div class="soft-box rounded-2xl p-4.5 flex items-center gap-4">
+            <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center shrink-0 border border-white/5">
+              <i class="fa-solid fa-chart-pie text-lg"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-sm text-white">Real-time Analytics</h3>
+              <p class="text-purple-100/70 text-xs mt-0.5">Observe live interaction adjustments instantly as they hit networks.</p>
+            </div>
+          </div>
+
+          <div class="soft-box rounded-2xl p-4.5 flex items-center gap-4">
+            <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center shrink-0 border border-white/5">
+              <i class="fa-solid fa-circle-nodes text-lg"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-sm text-white">Multi-Platform Mapping</h3>
+              <p class="text-purple-100/70 text-xs mt-0.5">Consolidate Instagram, TikTok, Facebook, and X inside unified spaces.</p>
+            </div>
+          </div>
+
+          <div class="soft-box rounded-2xl p-4.5 flex items-center gap-4">
+            <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center shrink-0 border border-white/5">
+              <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-sm text-white">AI Optimization Loops</h3>
+              <p class="text-purple-100/70 text-xs mt-0.5">Let machine algorithms isolate perfect timeslots for conversions spike.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="soft-box rounded-2xl p-5 mt-8 bg-white/[0.04]">
+          <p class="italic text-purple-50 text-sm font-medium leading-relaxed mb-4">
+            "Sociallytic changed how our branding pipelines operates. The real-time optimization nodes and data sheets readability are unparalleled."
+          </p>
+
+          <div class="flex items-center gap-3 border-t border-white/10 pt-3">
+            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-bold text-xs">SJ</div>
+            <div>
+              <h4 class="font-bold text-xs text-white">Sarah Johnson</h4>
+              <p class="text-purple-200/60 text-[11px] font-medium">Growth Director, TechCorp</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const loginForm = document.getElementById("loginForm");
+
+    loginForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (email === "" || password === "") {
+        alert("Please fill in all fields.");
+        return;
+      }
+      loginUser(email, password);
+    });
+
+    function togglePassword() {
+      const passwordInput = document.getElementById("password");
+      const eyeIcon = document.getElementById("eyeIcon");
+
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        eyeIcon.classList.remove("fa-eye");
+        eyeIcon.classList.add("fa-eye-slash");
+      } else {
+        passwordInput.type = "password";
+        eyeIcon.classList.remove("fa-eye-slash");
+        eyeIcon.classList.add("fa-eye");
+      }
+    }
+
+    function forgotPassword() {
+      alert("Password reset node integration will be active soon.");
+    }
+
+    function socialLogin(platform) {
+      alert(platform + " handshake loop selected.");
+      window.location.href = "index.html";
+    }
+  </script>
+  
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhAW-bYH2zbc8ceA1R4GEYXsuQA9pMDkg",
+      authDomain: "sociallytics-3cda3.firebaseapp.com",
+      projectId: "sociallytics-3cda3",
+      storageBucket: "sociallytics-3cda3.firebasestorage.app",
+      messagingSenderId: "781655894147",
+      appId: "1:781655894147:web:280397e6526f62e995d3b6",
+      measurementId: "G-BW15B45JVW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.loginUser = async function(email, password) {
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "dashboard.html";
+      } catch(error) {
+        console.error("Login error:", error.message);
+        alert("Invalid email or password.");
+      }
+    };
+  </script>
+
+</body>
+</html>
