@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sociallytic Dashboard</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    .dark-mode {
+      background: #0b0f19 !important;
+      color: #f8fafc !important;
+    }
+
+    .dark-mode .bg-white {
+      background: #111827 !important;
+      border-color: #1f2937 !important;
+    }
+
+    .dark-mode .text-slate-900 {
+      color: #f8fafc !important;
+    }
+
+    .dark-mode .text-slate-500 {
+      color: #9ca3af !important;
+    }
+
+    .dark-mode .border, .dark-mode .border-purple-100 {
+      border-color: #1f2937 !important;
+    }
+
+    .dark-mode .sidebar-active {
+      background: #1e1b4b !important;
+      color: #a78bfa !important;
+    }
+
+    .dark-mode .bg-purple-50 {
+      background: #1e1b4b !important;
+    }
+
+    body { 
+      font-family: "Inter", sans-serif; 
+      background: #f8fafc; 
+    }
+    
+    .purple-gradient { 
+      background: linear-gradient(135deg, #6366f1, #a855f7); 
+    }
+    
+    .sidebar-active { 
+      background: linear-gradient(90deg, #f5f3ff 0%, #ede9fe 100%); 
+      color: #7c3aed; 
+      border-left: 4px solid #7c3aed;
+    }
+    
+    .card-shadow { 
+      box-shadow: 0 10px 30px -5px rgba(124, 58, 237, 0.03), 0 4px 12px -5px rgba(124, 58, 237, 0.02); 
+    }
+
+    /* Custom Scrollbar for clean look */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+
+<body class="text-slate-900 antialiased selection:bg-purple-100">
+
+<div id="loadingScreen" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[999]">
+  <div class="bg-white px-8 py-6 rounded-2xl flex items-center gap-4 shadow-2xl border border-slate-100">
+    <div class="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+    <span class="font-semibold text-slate-700">Connecting account...</span>
+  </div>
+</div>
+
+<div id="successPopup" class="hidden fixed bottom-6 right-6 purple-gradient text-white px-6 py-4 rounded-2xl shadow-2xl z-[999] font-semibold flex items-center gap-2 border border-purple-400/20">
+  <i class="fa-solid fa-circle-check"></i> Platform connected successfully!
+</div>
+
+<div class="flex min-h-screen">
+
+  <aside class="w-64 bg-white border-r border-slate-100 p-6 fixed h-full flex flex-col justify-between z-30">
+    <div>
+      <a href="index.html" class="flex items-center gap-2.5 mb-10 px-2 group">
+        <div class="w-10 h-10 purple-gradient rounded-xl flex items-center justify-center text-white shadow-md shadow-purple-100 group-hover:scale-105 transition-transform">
+          <i class="fa-solid fa-chart-pie text-lg"></i>
+        </div>
+        <span class="font-black text-xl tracking-tight bg-gradient-to-r from-slate-900 to-purple-900 bg-clip-text text-transparent">Sociallytic</span>
+      </a>
+
+      <nav class="space-y-1">
+        <button onclick="showPage('dashboard', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl sidebar-active font-semibold text-left transition-all duration-200">
+          <i class="fa-solid fa-chart-simple text-sm"></i> Dashboard
+        </button>
+
+        <button onclick="showPage('analytics', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium text-left transition-all duration-200">
+          <i class="fa-solid fa-arrow-trend-up text-sm"></i> Analytics
+        </button>
+
+        <button onclick="showPage('ai', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium text-left transition-all duration-200">
+          <i class="fa-solid fa-robot text-sm"></i> AI Insights
+        </button>
+
+        <button onclick="showPage('scheduler', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium text-left transition-all duration-200">
+          <i class="fa-regular fa-calendar-days text-sm"></i> Scheduler
+        </button>
+
+        <button onclick="showPage('reports', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium text-left transition-all duration-200">
+          <i class="fa-regular fa-file-lines text-sm"></i> Reports
+        </button>
+
+        <button onclick="showPage('settings', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium text-left transition-all duration-200">
+          <i class="fa-solid fa-gear text-sm"></i> Settings
+        </button>
+      </nav>
+    </div>
+
+    <button onclick="logout()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-rose-600 font-semibold hover:bg-rose-50 transition-all duration-200 mt-auto">
+      <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i> Logout
+    </button>
+  </aside>
+
+  <main class="ml-64 w-full p-8 bg-slate-50/50 min-h-screen">
+
+    <div id="dashboardPage" class="dashboard-page space-y-8">
+
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-100 card-shadow">
+        <div>
+          <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Dashboard Overview</h1>
+          <p class="text-slate-500 text-sm mt-0.5">Track your social media performance realtime</p>
+          <div class="flex items-center gap-2 mt-2">
+            <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+            <p id="connectedPlatformText" class="text-purple-600 text-xs font-bold uppercase tracking-wider">
+              No platform connected yet
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <div class="relative flex-1 md:flex-none">
+            <input type="text" placeholder="Search dashboard..." class="bg-slate-50 border border-slate-100 rounded-xl pl-10 pr-4 py-2.5 text-sm w-full md:w-64 outline-none focus:bg-white focus:border-purple-500 transition-all"/>
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          </div>
+
+          <button onclick="toggleNotifications()" class="bg-slate-50 border border-slate-100 w-11 h-11 rounded-xl relative hover:bg-slate-100 transition-all flex items-center justify-center text-slate-600">
+            <i class="fa-regular fa-bell text-lg"></i>
+            <span class="absolute top-3 right-3 w-2 h-2 bg-rose-500 rounded-full"></span>
+          </button>
+
+          <div id="notificationBox" class="hidden absolute right-8 top-28 bg-white w-80 rounded-2xl card-shadow border border-slate-100 p-4 z-40">
+            <h3 class="font-bold text-slate-900 mb-3 flex items-center justify-between">
+              <span>Notifications</span>
+              <span class="text-xs font-normal text-purple-600">Mark all read</span>
+            </h3>
+            <div id="notificationList" class="space-y-2"></div>
+          </div>
+
+          <button onclick="openConnectModal()" class="purple-gradient text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 shadow-lg shadow-purple-500/20 transition-all flex items-center gap-2">
+            <i class="fa-solid fa-plus text-xs"></i> Connect Account
+          </button>
+
+          <select id="dateRangeFilter" onchange="updateDateRange()" class="bg-slate-50 border border-slate-100 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-700 outline-none cursor-pointer hover:bg-slate-100 transition-all">
+            <option value="7days">Last 7 days</option>
+            <option value="30days">Last 30 days</option>
+            <option value="month">This Month</option>
+          </select>
+        </div>
+      </div>
+
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow flex flex-col justify-between hover:translate-y-[-2px] transition-all duration-300">
+          <div class="flex justify-between items-start">
+            <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-xl">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <span class="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
+              <i class="fa-solid fa-caret-up"></i> 12.5%
+            </span>
+          </div>
+          <div class="mt-4">
+            <p class="text-slate-500 font-medium text-sm tracking-wide">Total Followers</p>
+            <h2 id="followersValue" class="text-3xl font-black text-slate-900 tracking-tight mt-1">--</h2>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow flex flex-col justify-between hover:translate-y-[-2px] transition-all duration-300">
+          <div class="flex justify-between items-start">
+            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-xl">
+              <i class="fa-regular fa-heart"></i>
+            </div>
+            <span id="engagementChange" class="bg-slate-100 text-slate-400 text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
+              Connect account
+            </span>
+          </div>
+          <div class="mt-4">
+            <p class="text-slate-500 font-medium text-sm tracking-wide">Total Engagement</p>
+            <h2 id="engagementValue" class="text-3xl font-black text-slate-900 tracking-tight mt-1">--</h2>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow flex flex-col justify-between hover:translate-y-[-2px] transition-all duration-300">
+          <div class="flex justify-between items-start">
+            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl">
+              <i class="fa-regular fa-eye"></i>
+            </div>
+            <span id="viewsChange" class="bg-slate-100 text-slate-400 text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
+              Connect account
+            </span>
+          </div>
+          <div class="mt-4">
+            <p class="text-slate-500 font-medium text-sm tracking-wide">Total Views</p>
+            <h2 id="viewsValue" class="text-3xl font-black text-slate-900 tracking-tight mt-1">--</h2>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow flex flex-col justify-between hover:translate-y-[-2px] transition-all duration-300">
+          <div class="flex justify-between items-start">
+            <div class="w-12 h-12 bg-pink-50 text-pink-600 rounded-xl flex items-center justify-center text-xl">
+              <i class="fa-regular fa-comment"></i>
+            </div>
+            <span id="postsChange" class="bg-slate-100 text-slate-400 text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
+              Connect account
+            </span>
+          </div>
+          <div class="mt-4">
+            <p class="text-slate-500 font-medium text-sm tracking-wide">Total Posts</p>
+            <h2 id="postsValue" class="text-3xl font-black text-slate-900 tracking-tight mt-1">--</h2>
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+        <div class="mb-5">
+          <h2 class="font-extrabold text-xl text-slate-900 tracking-tight">Connected Accounts</h2>
+          <p class="text-slate-500 text-sm mt-0.5">Your active integrated social media ecosystems</p>
+        </div>
+        <div id="connectedAccountsList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="border border-dashed border-slate-200 rounded-2xl p-6 text-center text-slate-400 flex items-center justify-center flex-col gap-2">
+            <i class="fa-solid fa-plug text-xl text-slate-300"></i> No accounts connected
+          </div>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+          <h2 class="font-extrabold text-lg text-slate-900 tracking-tight mb-4">Audience Gender Distribution</h2>
+          <div class="max-h-[300px] flex justify-center">
+            <canvas id="genderChart"></canvas>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+          <h2 class="font-extrabold text-lg text-slate-900 tracking-tight mb-4">Audience Age Distribution</h2>
+          <canvas id="ageChart" height="140"></canvas>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+        <div class="mb-5">
+          <h2 class="font-extrabold text-xl text-slate-900 tracking-tight">Best Posting Times</h2>
+          <p class="text-slate-500 text-sm mt-0.5">Recommended slots optimized by user engagement peak levels</p>
+        </div>
+        <canvas id="postingTimeChart" height="90"></canvas>
+      </section>
+
+      <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <h2 class="font-extrabold text-xl text-slate-900 tracking-tight">Engagement Trends</h2>
+            <div class="flex items-center gap-1.5 bg-slate-50 p-1 rounded-xl border border-slate-100">
+              <button onclick="toggleDataset(0)" class="bg-white text-purple-700 px-3 py-1.5 shadow-sm rounded-lg text-xs font-semibold hover:bg-slate-50 transition-all">Likes</button>
+              <button onclick="toggleDataset(1)" class="bg-white text-blue-700 px-3 py-1.5 shadow-sm rounded-lg text-xs font-semibold hover:bg-slate-50 transition-all">Comments</button>
+              <button onclick="toggleDataset(2)" class="bg-white text-pink-700 px-3 py-1.5 shadow-sm rounded-lg text-xs font-semibold hover:bg-slate-50 transition-all">Shares</button>
+            </div>
+          </div>
+          <canvas id="engagementChart" height="140"></canvas>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow flex flex-col justify-between">
+          <div class="mb-4">
+            <h2 class="font-extrabold text-lg text-slate-900 tracking-tight">Platform Split</h2>
+            <p class="text-slate-500 text-xs mt-0.5">Weekly platform performance metrics</p>
+          </div>
+          <div id="platformPerformanceList" class="space-y-4"></div>
+
+          <div class="space-y-4 mt-2">
+            <div>
+              <div class="flex justify-between items-center text-sm mb-1.5">
+                <span class="font-medium text-slate-700 flex items-center gap-2"><i class="fa-brands fa-instagram text-purple-500"></i> Instagram</span>
+                <span class="text-emerald-600 font-bold text-xs"><i class="fa-solid fa-arrow-up"></i> 12.5%</span>
+              </div>
+              <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-purple-500 rounded-full" style="width: 84%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between items-center text-sm mb-1.5">
+                <span class="font-medium text-slate-700 flex items-center gap-2"><i class="fa-brands fa-tiktok text-slate-900"></i> TikTok</span>
+                <span class="text-emerald-600 font-bold text-xs"><i class="fa-solid fa-arrow-up"></i> 9.4%</span>
+              </div>
+              <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-slate-900 rounded-full" style="width: 76%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between items-center text-sm mb-1.5">
+                <span class="font-medium text-slate-700 flex items-center gap-2"><i class="fa-brands fa-facebook text-blue-600"></i> Facebook</span>
+                <span class="text-rose-500 font-bold text-xs"><i class="fa-solid fa-arrow-down"></i> 2.1%</span>
+              </div>
+              <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-blue-600 rounded-full" style="width: 58%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between items-center text-sm mb-1.5">
+                <span class="font-medium text-slate-700 flex items-center gap-2"><i class="fa-brands fa-x-twitter text-slate-800"></i> X / Twitter</span>
+                <span class="text-emerald-600 font-bold text-xs"><i class="fa-solid fa-arrow-up"></i> 6.8%</span>
+              </div>
+              <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-slate-700 rounded-full" style="width: 69%"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div>
+            <h2 class="font-extrabold text-xl text-slate-900 tracking-tight">Recent Posts</h2>
+            <p class="text-slate-500 text-sm mt-0.5">Latest curated content engagement audit</p>
+          </div>
+          <div class="relative w-full sm:w-auto">
+            <input id="postSearchInput" onkeyup="searchRecentPosts()" type="text" placeholder="Search content..." class="w-full sm:w-60 bg-slate-50 border border-slate-100 px-4 py-2 rounded-xl text-sm outline-none focus:bg-white focus:border-purple-500 transition-all"/>
+            <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          </div>
+        </div>
+        <div id="recentPostsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </section>
+
+      <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+          <h2 class="font-extrabold text-lg text-slate-900 tracking-tight mb-4">Top Performance Content</h2>
+          <div id="topContentList" class="space-y-3"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+          <h2 class="font-extrabold text-lg text-slate-900 tracking-tight mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-sparkles text-purple-500 animate-pulse"></i> AI Insights
+          </h2>
+          <div class="space-y-3">
+            <div class="bg-purple-50/50 border border-purple-100/50 p-4 rounded-xl flex gap-3">
+              <div class="w-10 h-10 bg-purple-600 text-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-purple-500/20"><i class="fa-solid fa-bolt"></i></div>
+              <div>
+                <h3 class="font-bold text-slate-900 text-sm">Best Posting Time</h3>
+                <p class="text-xs text-slate-600 mt-0.5">Your community is mostly online between 8PM - 10PM slots.</p>
+              </div>
+            </div>
+            <div class="bg-blue-50/50 border border-blue-100/50 p-4 rounded-xl flex gap-3">
+              <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-blue-500/20"><i class="fa-solid fa-chart-line"></i></div>
+              <div>
+                <h3 class="font-bold text-slate-900 text-sm">Engagement Growth</h3>
+                <p class="text-xs text-slate-600 mt-0.5">Instagram analytics metrics increased by 12.5% this cycle.</p>
+              </div>
+            </div>
+            <div class="bg-pink-50/50 border border-pink-100/50 p-4 rounded-xl flex gap-3">
+              <div class="w-10 h-10 bg-pink-600 text-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-pink-500/20"><i class="fa-solid fa-users"></i></div>
+              <div>
+                <h3 class="font-bold text-slate-900 text-sm">Audience Insight</h3>
+                <p class="text-xs text-slate-600 mt-0.5">Dominant user base sits perfectly between 18 - 24 age brackets.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow flex flex-col justify-between">
+          <div>
+            <h2 class="font-extrabold text-lg text-slate-900 tracking-tight mb-3">Sentiment Analysis</h2>
+            <div class="max-h-[180px] flex justify-center">
+              <canvas id="sentimentChart"></canvas>
+            </div>
+          </div>
+          <p class="text-xs text-emerald-600 bg-emerald-50 px-3 py-2 rounded-xl font-semibold mt-4 text-center">
+            <i class="fa-solid fa-smile mr-1"></i> Comments are overwhelmingly positive this week.
+          </p>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+        <h2 class="font-extrabold text-lg text-slate-900 tracking-tight mb-4">Weekly Content Cadence</h2>
+        <canvas id="weeklyChart" height="90"></canvas>
+      </section>
+    </div>
+
+    <div id="analyticsPage" class="dashboard-page hidden space-y-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-100 card-shadow">
+        <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Deep Analytics</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Granular social media performance logs statement</p>
+      </div>
+
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+          <p class="text-slate-500 font-semibold text-sm">Engagement Rate</p>
+          <h2 class="text-4xl font-black text-purple-600 tracking-tight mt-2">8.7%</h2>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+          <p class="text-slate-500 font-semibold text-sm">Reach Growth</p>
+          <h2 class="text-4xl font-black text-emerald-600 tracking-tight mt-2">+15.2%</h2>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+          <p class="text-slate-500 font-semibold text-sm">Profile Visits</p>
+          <h2 class="text-4xl font-black text-slate-900 tracking-tight mt-2">24.8K</h2>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+        <h2 class="font-extrabold text-lg text-slate-900 mb-2">Analytics Summary</h2>
+        <p class="text-slate-600 text-sm leading-relaxed">
+          Your integrated social pipeline maps show immense upscaled interaction records. Core target demographic loops match clean conversion flows.
+        </p>
+      </section>
+    </div>
+
+    <div id="aiPage" class="dashboard-page hidden space-y-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-100 card-shadow">
+        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">AI Analytical Model</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Automated deep machine insights predictions</p>
+      </div>
+
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+          <h2 class="font-bold text-slate-500 text-sm uppercase tracking-wider mb-2">Optimal Timing</h2>
+          <p class="text-3xl font-black text-purple-600">8PM - 10PM</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+          <h2 class="font-bold text-slate-500 text-sm uppercase tracking-wider mb-2">Growth Vector</h2>
+          <p class="text-3xl font-black text-emerald-600">+18%</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+          <h2 class="font-bold text-slate-500 text-sm uppercase tracking-wider mb-2">Content Matrix Recommendation</h2>
+          <p class="text-slate-700 text-sm font-medium mt-1">Short-form cinematic video yields a 4.2x higher trend weight score.</p>
+        </div>
+      </section>
+    </div>
+
+    <div id="schedulerPage" class="dashboard-page hidden space-y-6">
+      <div class="flex justify-between items-center bg-white p-6 rounded-2xl border border-slate-100 card-shadow">
+        <div>
+          <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Content Scheduler</h1>
+          <p class="text-slate-500 text-sm mt-0.5">Automate and queue timeline pipelines logs</p>
+        </div>
+        <button onclick="addScheduledPost()" class="purple-gradient text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-purple-500/10 flex items-center gap-2">
+          <i class="fa-solid fa-plus"></i> Schedule Post
+        </button>
+      </div>
+
+      <section class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input id="scheduleTitle" type="text" placeholder="Post title content summary..." class="bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm outline-none focus:bg-white focus:border-purple-500 transition-all">
+          <select id="schedulePlatform" class="bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm outline-none font-medium text-slate-700 cursor-pointer focus:bg-white focus:border-purple-500 transition-all">
+            <option>Instagram</option>
+            <option>TikTok</option>
+            <option>Facebook</option>
+            <option>X</option>
+          </select>
+          <input id="scheduleTime" type="datetime-local" class="bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm outline-none font-medium text-slate-700 focus:bg-white focus:border-purple-500 transition-all">
+        </div>
+      </section>
+
+      <section class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+        <h2 class="font-extrabold text-lg text-slate-900 mb-4">Upcoming Queue</h2>
+        <div id="scheduledPostList" class="space-y-3"></div>
+      </section>
+    </div>
+
+    <div id="reportsPage" class="dashboard-page hidden">
+      <div class="w-full max-w-6xl mx-auto space-y-6">
+        <div class="bg-white p-8 rounded-2xl border border-slate-100 card-shadow text-center">
+          <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Reports Studio</h1>
+          <p class="text-slate-500 text-sm mt-1">Package, compile and download verified performance books assets</p>
+        </div>
+
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow flex flex-col justify-between h-48">
+            <h2 class="font-extrabold text-slate-900 text-base flex items-center gap-2"><i class="fa-solid fa-chart-pie text-purple-500"></i> Analytics Ledger</h2>
+            <button onclick="exportReport()" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-purple-600/10 transition-all">Export Report</button>
+          </div>
+          <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow flex flex-col justify-between h-48">
+            <h2 class="font-extrabold text-slate-900 text-base flex items-center gap-2"><i class="fa-solid fa-user-group text-blue-500"></i> Audience Breakdown</h2>
+            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-600/10 transition-all">Download PDF</button>
+          </div>
+          <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow flex flex-col justify-between h-48">
+            <h2 class="font-extrabold text-slate-900 text-base flex items-center gap-2"><i class="fa-solid fa-clapperboard text-pink-500"></i> Content Matrix Book</h2>
+            <button class="w-full bg-pink-600 hover:bg-pink-700 text-white py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-pink-600/10 transition-all">Download PDF</button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div id="settingsPage" class="dashboard-page hidden">
+      <div class="w-full max-w-4xl mx-auto space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-2xl border border-slate-100 card-shadow gap-4">
+          <div>
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">System Configuration</h1>
+            <p class="text-slate-500 text-sm mt-0.5">Configure and update developer runtime properties profiles</p>
+          </div>
+          <button class="purple-gradient text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-purple-500/10 transition-all">Save Config Changes</button>
+        </div>
+
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow flex flex-col items-center justify-center p-8 text-center">
+            <div class="w-20 h-20 purple-gradient text-white rounded-full flex items-center justify-center text-3xl shadow-lg shadow-purple-500/20 mb-4">
+              <i class="fa-solid fa-user-astronaut"></i>
+            </div>
+            <h2 class="font-extrabold text-slate-900 text-lg">Sociallytic User</h2>
+            <p class="text-purple-600 text-xs font-bold uppercase tracking-wider mt-1">Content Strategist</p>
+          </div>
+
+          <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-100 card-shadow">
+            <h2 class="font-extrabold text-slate-900 text-base mb-4">Account Metadata</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Identity Name</label>
+                <input type="text" value="Sociallytic User" class="w-full mt-1.5 bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm outline-none focus:bg-white focus:border-purple-500 transition-all" />
+              </div>
+              <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Comms Endpoint</label>
+                <input type="email" value="user@email.com" class="w-full mt-1.5 bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm outline-none focus:bg-white focus:border-purple-500 transition-all" />
+              </div>
+              <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Handle Tag</label>
+                <input type="text" value="@sociallytic" class="w-full mt-1.5 bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm outline-none focus:bg-white focus:border-purple-500 transition-all" />
+              </div>
+              <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Access Scope Tier</label>
+                <input type="text" value="Professional Developer" class="w-full mt-1.5 bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm outline-none border-none opacity-60 cursor-not-allowed" readonly />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="bg-white rounded-2xl p-6 border border-slate-100 card-shadow flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div class="flex items-center gap-4 text-center sm:text-left">
+            <div class="w-12 h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center text-xl shadow-md"><i class="fa-solid fa-moon"></i></div>
+            <div>
+              <h2 class="font-extrabold text-slate-900 text-base">Dashboard Core Theme skin</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Invert viewport layout background arrays lux indexes settings</p>
+            </div>
+          </div>
+          <button onclick="toggleDarkMode()" class="bg-slate-900 hover:bg-slate-800 text-white text-sm px-5 py-2.5 rounded-xl font-bold transition-all">Toggle Dark Skin Mode</button>
+        </section>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="connectModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 transition-all">
+  <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl border border-slate-100 m-4">
+    <div class="flex justify-between items-center mb-4">
+      <div>
+        <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Connect Social Ecosystem</h2>
+        <p class="text-slate-500 text-sm mt-1">Select a social account and enter username/password to connect.</p>
+      </div>
+      <button onclick="closeConnectModal()" class="text-slate-400 hover:text-slate-600 p-1 text-lg"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="space-y-2.5">
+      <button type="button" onclick="selectPlatform('Instagram')" data-platform="Instagram" class="platform-select-btn w-full flex items-center justify-between border border-slate-100 p-4 rounded-xl hover:bg-purple-50/50 hover:border-purple-200 transition-all group">
+        <div class="flex items-center gap-3">
+          <i class="fa-brands fa-instagram text-purple-600 text-2xl"></i>
+          <span class="font-bold text-slate-800 text-sm">Instagram</span>
+        </div>
+        <i class="fa-solid fa-chevron-right text-slate-300 group-hover:translate-x-1 transition-transform text-xs"></i>
+      </button>
+      <button type="button" onclick="selectPlatform('TikTok')" data-platform="TikTok" class="platform-select-btn w-full flex items-center justify-between border border-slate-100 p-4 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all group">
+        <div class="flex items-center gap-3">
+          <i class="fa-brands fa-tiktok text-slate-900 text-2xl"></i>
+          <span class="font-bold text-slate-800 text-sm">TikTok</span>
+        </div>
+        <i class="fa-solid fa-chevron-right text-slate-300 group-hover:translate-x-1 transition-transform text-xs"></i>
+      </button>
+      <button type="button" onclick="selectPlatform('Facebook')" data-platform="Facebook" class="platform-select-btn w-full flex items-center justify-between border border-slate-100 p-4 rounded-xl hover:bg-blue-50/50 hover:border-blue-200 transition-all group">
+        <div class="flex items-center gap-3">
+          <i class="fa-brands fa-facebook text-blue-600 text-2xl"></i>
+          <span class="font-bold text-slate-800 text-sm">Facebook</span>
+        </div>
+        <i class="fa-solid fa-chevron-right text-slate-300 group-hover:translate-x-1 transition-transform text-xs"></i>
+      </button>
+      <button type="button" onclick="selectPlatform('X')" data-platform="X" class="platform-select-btn w-full flex items-center justify-between border border-slate-100 p-4 rounded-xl hover:bg-slate-50 hover:border-slate-200 transition-all group">
+        <div class="flex items-center gap-3">
+          <i class="fa-brands fa-x-twitter text-slate-900 text-2xl"></i>
+          <span class="font-bold text-slate-800 text-sm">X</span>
+        </div>
+        <i class="fa-solid fa-chevron-right text-slate-300 group-hover:translate-x-1 transition-transform text-xs"></i>
+      </button>
+    </div>
+    <div id="platformCredentials" class="hidden mt-6 rounded-3xl border border-slate-100 bg-slate-50 p-5">
+      <div class="flex items-center gap-3 mb-4">
+        <div id="selectedPlatformIcon" class="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-2xl text-purple-600">
+          <i class="fa-brands fa-instagram"></i>
+        </div>
+        <div>
+          <p class="text-[10px] uppercase tracking-[0.24em] text-slate-500 mb-1">Selected</p>
+          <h3 id="selectedPlatformText" class="text-lg font-bold text-slate-900">Instagram</h3>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Username</label>
+          <input id="connectionUsername" type="text" placeholder="@yourusername" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-50/50 transition-all" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Password</label>
+          <input id="connectionPassword" type="password" placeholder="Enter password" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-50/50 transition-all" />
+        </div>
+      </div>
+      <div class="mt-5 flex flex-wrap items-center gap-3">
+        <button type="button" onclick="submitPlatformConnection()" class="purple-gradient text-white px-6 py-3 rounded-2xl text-sm font-semibold shadow-lg shadow-purple-500/20 hover:opacity-95 transition-all">Connect</button>
+        <button type="button" onclick="resetConnectSelection()" class="text-slate-600 px-4 py-3 rounded-2xl border border-slate-200 hover:bg-slate-100 transition-all text-sm">Choose another</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// LOGICAL CONFIG DATA OBJECT ARRAYS (PRESERVED)
+// ============================================================================
+const platformPerformanceData = {
+  Instagram: [
+    { name: "Instagram", growth: "+12.5%", level: "84%", color: "bg-purple-600", status: "up" },
+    { name: "TikTok", growth: "+9.4%", level: "76%", color: "bg-black", status: "up" },
+    { name: "Facebook", growth: "-2.1%", level: "58%", color: "bg-blue-600", status: "down" },
+    { name: "X", growth: "+6.8%", level: "69%", color: "bg-slate-900", status: "up" }
+  ],
+  TikTok: [
+    { name: "TikTok", growth: "+18.7%", level: "91%", color: "bg-black", status: "up" },
+    { name: "Instagram", growth: "+8.3%", level: "72%", color: "bg-purple-600", status: "up" },
+    { name: "Facebook", growth: "-1.4%", level: "55%", color: "bg-blue-600", status: "down" },
+    { name: "X", growth: "+4.2%", level: "62%", color: "bg-slate-900", status: "up" }
+  ],
+  Facebook: [
+    { name: "Facebook", growth: "+10.1%", level: "80%", color: "bg-blue-600", status: "up" },
+    { name: "Instagram", growth: "+6.5%", level: "68%", color: "bg-purple-600", status: "up" },
+    { name: "TikTok", growth: "+3.9%", level: "60%", color: "bg-black", status: "up" },
+    { name: "X", growth: "-3.2%", level: "49%", color: "bg-slate-900", status: "down" }
+  ],
+  "X": [
+    { name: "X", growth: "+14.2%", level: "86%", color: "bg-slate-900", status: "up" },
+    { name: "Instagram", growth: "+5.4%", level: "67%", color: "bg-purple-600", status: "up" },
+    { name: "TikTok", growth: "+2.7%", level: "59%", color: "bg-black", status: "up" },
+    { name: "Facebook", growth: "-2.6%", level: "51%", color: "bg-blue-600", status: "down" }
+  ]
+};
+
+function showPage(page, button) {
+  const sections = document.querySelectorAll(".dashboard-page");
+  sections.forEach(section => { section.classList.add("hidden"); });
+
+  const selectedPage = document.getElementById(page + "Page");
+  if (selectedPage) { selectedPage.classList.remove("hidden"); }
+
+  const buttons = document.querySelectorAll(".sidebar-btn");
+  buttons.forEach(btn => { 
+    btn.className = "sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 text-slate-600 font-medium text-left transition-all duration-200"; 
+  });
+
+  button.className = "sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl sidebar-active font-semibold text-left transition-all duration-200";
+}
+
+function updatePlatformPerformance(platforms) {
+  const list = document.getElementById("platformPerformanceList");
+  list.innerHTML = "";
+  const platformList = Array.isArray(platforms) ? platforms : [platforms];
+
+  platformList.forEach(platform => {
+    const data = platformPerformanceData[platform];
+    if (!data) return;
+
+    const container = document.createElement("div");
+    container.className = "mb-4 space-y-3";
+
+    data.forEach(item => {
+      const growthColor = item.status === "up" ? "text-emerald-600" : "text-rose-500";
+      const arrow = item.status === "up" ? "↑" : "↓";
+
+      container.innerHTML += `
+        <div>
+          <div class="flex justify-between text-sm mb-1">
+            <span class="font-medium text-slate-700">${item.name}</span>
+            <span class="${growthColor} font-bold text-xs">${arrow} ${item.growth.replace("+","").replace("-","")}</span>
+          </div>
+          <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full ${item.color} rounded-full" style="width: ${item.level};"></div>
+          </div>
+        </div>
+      `;
+    });
+    list.appendChild(container);
+  });
+}
+
+const topContentData = {
+  Instagram: ["🔥 Instagram Reel - 15.2K likes", "📸 Carousel Post - 8.4K likes", "💬 Story Poll - 3.1K replies"],
+  TikTok: ["🚀 TikTok Video - 120.7K views", "🎵 Trending Sound Post - 65.3K views", "💬 Reply Video - 22.9K comments"],
+  Facebook: ["📌 Facebook Post - 4.8K shares", "👍 Product Update - 9.2K reactions", "💬 Community Post - 2.7K comments"],
+  "X": ["✍️ Viral Tweet - 18.6K impressions", "🔁 Thread Post - 4.2K reposts", "💬 Poll Tweet - 1.5K replies"]
+};
+
+function updateTopContent(platforms) {
+  const list = document.getElementById("topContentList");
+  list.innerHTML = "";
+  const platformList = Array.isArray(platforms) ? platforms : [platforms];
+
+  platformList.forEach(platform => {
+    const data = topContentData[platform];
+    if (!data) return;
+
+    const container = document.createElement("div");
+    container.className = "space-y-2";
+
+    data.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "bg-slate-50 border border-slate-100 p-3 rounded-xl text-xs font-semibold text-slate-700 flex items-center justify-between";
+      div.innerText = `${platform} • ${item}`;
+      container.appendChild(div);
+    });
+    list.appendChild(container);
+  });
+}
+
+const platformData = {
+  Instagram: { followers: "125.8K", engagement: "48.2K", views: "892.4K", posts: "234" },
+  TikTok: { followers: "98.4K", engagement: "65.7K", views: "1.2M", posts: "180" },
+  Facebook: { followers: "76.3K", engagement: "32.1K", views: "540.6K", posts: "210" },
+  "X": { followers: "45.9K", engagement: "18.4K", views: "320.8K", posts: "145" }
+};
+
+const recentPostsData = {
+  Instagram: [
+    { title: "Summer Fashion Reel", engagement: "15.2K Likes", views: "120K Views", type: "Reel" },
+    { title: "Product Carousel", engagement: "8.4K Likes", views: "64K Views", type: "Carousel" },
+    { title: "Story Promotion", engagement: "3.2K Replies", views: "22K Views", type: "Story" }
+  ],
+  TikTok: [
+    { title: "Trending Dance Video", engagement: "22.8K Likes", views: "540K Views", type: "Video" },
+    { title: "Funny Clip", engagement: "18.4K Likes", views: "420K Views", type: "Video" },
+    { title: "Tutorial Video", engagement: "11.7K Likes", views: "190K Views", type: "Tutorial" }
+  ],
+  Facebook: [
+    { title: "Community Update", engagement: "5.3K Reactions", views: "48K Reach", type: "Post" },
+    { title: "Event Promotion", engagement: "3.9K Shares", views: "62K Reach", type: "Event" },
+    { title: "Business Tips", engagement: "2.1K Comments", views: "27K Reach", type: "Article" }
+  ],
+  "X": [
+    { title: "Marketing Thread", engagement: "6.2K Reposts", views: "180K Impressions", type: "Thread" },
+    { title: "Quick Poll", engagement: "3.8K Votes", views: "95K Impressions", type: "Poll" },
+    { title: "Trending Tweet", engagement: "4.7K Likes", views: "140K Impressions", type: "Tweet" }
+  ]
+};
+
+function updateRecentPosts(platform) {
+  const list = document.getElementById("recentPostsList");
+  const data = recentPostsData[platform];
+  if (!data) return;
+  renderRecentPosts(data);
+}
+
+function updateDashboardData(platform) {
+  const data = platformData[platform];
+  if (!data) return;
+  document.getElementById("followersValue").innerText = data.followers;
+  document.getElementById("engagementValue").innerText = data.engagement;
+  document.getElementById("viewsValue").innerText = data.views;
+  document.getElementById("postsValue").innerText = data.posts;
+}
+    
+let currentConnectPlatform = null;
+
+function openConnectModal() { document.getElementById("connectModal").classList.remove("hidden"); }
+function closeConnectModal() { document.getElementById("connectModal").classList.add("hidden"); }
+
+function selectPlatform(platform) {
+  currentConnectPlatform = platform;
+  document.getElementById("platformCredentials").classList.remove("hidden");
+  document.getElementById("selectedPlatformText").innerText = platform;
+  const icon = document.getElementById("selectedPlatformIcon");
+  icon.innerHTML = `<i class="fa-brands ${getPlatformIcon(platform)}"></i>`;
+  document.querySelectorAll("#connectModal .platform-select-btn").forEach(btn => {
+    if (btn.dataset.platform === platform) {
+      btn.classList.add("border-purple-200", "bg-purple-50/50");
+    } else {
+      btn.classList.remove("border-purple-200", "bg-purple-50/50");
+    }
+  });
+}
+
+function resetConnectSelection() {
+  currentConnectPlatform = null;
+  document.getElementById("platformCredentials").classList.add("hidden");
+  document.getElementById("selectedPlatformText").innerText = "Select a platform";
+  document.getElementById("selectedPlatformIcon").innerHTML = `<i class="fa-brands fa-instagram"></i>`;
+  document.querySelectorAll("#connectModal .platform-select-btn").forEach(btn => {
+    btn.classList.remove("border-purple-200", "bg-purple-50/50");
+  });
+}
+
+function submitPlatformConnection() {
+  if (!currentConnectPlatform) {
+    alert("Please select a platform first.");
+    return;
+  }
+  const username = document.getElementById("connectionUsername").value.trim();
+  const password = document.getElementById("connectionPassword").value.trim();
+  if (!username || !password) {
+    alert("Please enter both username and password.");
+    return;
+  }
+  connectPlatform(currentConnectPlatform, username, password);
+}
+
+function connectPlatform(platform, username) {
+  document.getElementById("loadingScreen").classList.remove("hidden");
+  setTimeout(() => {
+    localStorage.setItem("connectedPlatform", platform);
+    localStorage.setItem("connectedUsername", username);
+    closeConnectModal();
+    const popup = document.getElementById("successPopup");
+    popup.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${platform} connected successfully!`;
+    popup.classList.remove("hidden");
+    
+    setTimeout(() => { popup.classList.add("hidden"); }, 2500);
+
+    updateConnectedPlatform(platform);
+    const selectedRange = localStorage.getItem("selectedDateRange") || "7days";
+    updateDashboardDataByRange(platform, selectedRange);
+
+    createChart(platform);
+    updatePlatformPerformance(platform);
+    updateSentimentChart(platform);
+    updateConnectedAccounts({ platform, username });
+    updateNotifications(platform);
+    updatePostingTimeChart(platform);
+    updateRecentPosts(platform);
+
+    if (typeof window.savePlatformToFirebase === "function") {
+      window.savePlatformToFirebase(platform);
+    } else {
+      console.error("savePlatformToFirebase function not ready yet");
+    }
+    document.getElementById("loadingScreen").classList.add("hidden");
+  }, 1500);
+}
+
+function updateConnectedPlatform(platform) {
+  const platformTitle = document.getElementById("connectedPlatformText");
+  if (platformTitle) { platformTitle.innerText = "Connected Engine: " + platform; }
+}
+
+function setDashboardEmptyState() {
+  document.getElementById("followersValue").innerText = "--";
+  document.getElementById("engagementValue").innerText = "--";
+  document.getElementById("viewsValue").innerText = "--";
+  document.getElementById("postsValue").innerText = "--";
+  document.getElementById("engagementChange").innerText = "Connect account";
+  document.getElementById("viewsChange").innerText = "Connect account";
+  document.getElementById("postsChange").innerText = "Connect account";
+  const connectedText = document.getElementById("connectedPlatformText");
+  if (connectedText) { connectedText.innerText = "Connected Engine: None"; }
+  const accounts = document.getElementById("connectedAccountsList");
+  if (accounts) {
+    accounts.innerHTML = `<div class="border border-dashed border-slate-200 rounded-2xl p-6 text-center text-slate-400 flex items-center justify-center flex-col gap-2"><i class="fa-solid fa-plug text-xl text-slate-300"></i> No accounts connected</div>`;
+  }
+  const notifications = document.getElementById("notificationList");
+  if (notifications) {
+    notifications.innerHTML = `<div class="bg-slate-50 border border-slate-100/70 p-3 rounded-xl text-xs text-slate-700 font-medium">Connect an account to see live alerts.</div>`;
+  }
+}
+
+function toggleNotifications() { document.getElementById("notificationBox").classList.toggle("hidden"); }
+
+async function logout() {
+  await signOut(auth);
+  localStorage.removeItem("connectedPlatform");
+  localStorage.removeItem("selectedDateRange");
+  alert("Logged out successfully!");
+  window.location.href = "login.html";
+}
+
+const chartData = {
+  Instagram: { likes: [1200, 1900, 2400, 3000, 3500, 3100, 4200], comments: [400, 600, 800, 900, 1000, 850, 1200], shares: [200, 300, 500, 700, 650, 800, 1000] },
+  TikTok: { likes: [2200, 2800, 3500, 4200, 5100, 6000, 7200], comments: [700, 900, 1200, 1400, 1800, 1900, 2200], shares: [500, 700, 900, 1100, 1300, 1600, 2000] },
+  Facebook: { likes: [800, 1200, 1400, 1800, 2200, 2400, 2600], comments: [300, 450, 600, 700, 850, 900, 1100], shares: [150, 200, 300, 450, 500, 600, 750] },
+  "X": { likes: [600, 900, 1200, 1600, 1800, 2200, 2600], comments: [200, 300, 450, 500, 650, 700, 850], shares: [100, 150, 250, 350, 450, 500, 650] }
+};
+
+let engagementChart;
+function createChart(platform) {
+  const data = chartData[platform];
+  if (!data) return;
+  const ctx = document.getElementById("engagementChart");
+  if (engagementChart) { engagementChart.destroy(); }
+
+  engagementChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      datasets: [
+        { label: "Likes", data: data.likes, borderColor: "#7c3aed", backgroundColor: "rgba(124,58,237,0.06)", fill: true, tension: 0.38, borderWidth: 2.5 },
+        { label: "Comments", data: data.comments, borderColor: "#2563eb", backgroundColor: "rgba(37,99,235,0.04)", fill: true, tension: 0.38, borderWidth: 2.5 },
+        { label: "Shares", data: data.shares, borderColor: "#db2777", backgroundColor: "rgba(219,39,119,0.04)", fill: true, tension: 0.38, borderWidth: 2.5 }
+      ]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { border: { dash: [4, 4] }, grid: { color: "#f1f5f9" } }, x: { grid: { display: false } } } }
+  });
+}
+
+function toggleDataset(index) {
+  if (!engagementChart) return;
+  const meta = engagementChart.getDatasetMeta(index);
+  const currentHidden = meta.hidden === null ? false : !!meta.hidden;
+  meta.hidden = !currentHidden;
+  engagementChart.update();
+}
+
+let sentimentChart;
+const sentimentData = { Instagram: [72, 20, 8], TikTok: [65, 25, 10], Facebook: [58, 30, 12], "X": [54, 32, 14] };
+
+function updateSentimentChart(platform) {
+  const data = sentimentData[platform];
+  if (!data) return;
+  const ctx = document.getElementById("sentimentChart");
+  if (sentimentChart) { sentimentChart.destroy(); }
+
+  sentimentChart = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: ["Positive", "Neutral", "Negative"],
+      datasets: [{ data: data, backgroundColor: ["#10b981", "#f59e0b", "#ef4444"], borderWith: 0 }]
+    },
+    options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } }, cutout: "70%" }
+  });
+}
+
+new Chart(document.getElementById("weeklyChart"), {
+  type: "bar",
+  data: {
+    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    datasets: [{ label: "Posts Metrics", data: [5, 8, 6, 10, 7, 12, 9], backgroundColor: "#7c3aed", borderRadius: 6 }]
+  },
+  options: { scales: { y: { grid: { color: "#f1f5f9" } }, x: { grid: { display: false } } } }
+});
+
+let genderChart;
+let ageChart;
+const audienceData = {
+  Instagram: { gender: [62, 38], age: [18, 35, 28, 14, 5] },
+  TikTok: { gender: [58, 42], age: [32, 40, 18, 7, 3] },
+  Facebook: { gender: [55, 45], age: [8, 18, 30, 28, 16] },
+  "X": { gender: [60, 40], age: [15, 30, 32, 16, 7] }
+};
+
+function updateAudienceCharts(platform) {
+  const data = audienceData[platform];
+  if (!data) return;
+
+  if (genderChart) { genderChart.destroy(); }
+  if (ageChart) { ageChart.destroy(); }
+
+  genderChart = new Chart(document.getElementById("genderChart"), {
+    type: "doughnut",
+    data: { labels: ["Female", "Male"], datasets: [{ data: data.gender, backgroundColor: ["#a855f7", "#3b82f6"], borderWidth: 0 }] },
+    options: { cutout: "75%", plugins: { legend: { position: 'bottom' } } }
+  });
+
+  ageChart = new Chart(document.getElementById("ageChart"), {
+    type: "bar",
+    data: {
+      labels: ["13-17", "18-24", "25-34", "35-44", "45+"],
+      datasets: [{ label: "Audience Pool Mapping %", data: data.age, backgroundColor: "#6366f1", borderRadius: 6 }]
+    }
+  });
+}
+
+const dateRangeData = {
+  "7days": { label: "Last 7 days", multiplier: 1 },
+  "30days": { label: "Last 30 days", multiplier: 3 },
+  "month": { label: "This Month", multiplier: 2 }
+};
+
+function updateDateRange() {
+  const selectedRange = document.getElementById("dateRangeFilter").value;
+  const platform = localStorage.getItem("connectedPlatform") || "Instagram";
+  localStorage.setItem("selectedDateRange", selectedRange);
+  updateDashboardDataByRange(platform, selectedRange);
+}
+
+function updateDashboardDataByRange(platform, range) {
+  const data = platformData[platform];
+  const rangeInfo = dateRangeData[range];
+  if (!data || !rangeInfo) return;
+
+  document.getElementById("followersValue").innerText = data.followers;
+  document.getElementById("engagementValue").innerText = multiplyValue(data.engagement, rangeInfo.multiplier);
+  document.getElementById("viewsValue").innerText = multiplyValue(data.views, rangeInfo.multiplier);
+  document.getElementById("postsValue").innerText = multiplyValue(data.posts, rangeInfo.multiplier);
+}
+
+function multiplyValue(value, multiplier) {
+  if (value.includes("M")) { return (parseFloat(value.replace("M", "")) * multiplier).toFixed(1) + "M"; }
+  if (value.includes("K")) { return (parseFloat(value.replace("K", "")) * multiplier).toFixed(1) + "K"; }
+  return Math.round(Number(value) * multiplier);
+}
+
+window.onload = function() {
+  const darkMode = localStorage.getItem("darkMode");
+  if (darkMode === "true") { document.body.classList.add("dark-mode"); }
+
+  const savedPlatform = localStorage.getItem("connectedPlatform");
+  const savedUsername = localStorage.getItem("connectedUsername");
+  if (savedPlatform) {
+    updateConnectedPlatform(savedPlatform);
+    if (window.loadPlatformFromFirebase) { window.loadPlatformFromFirebase(savedPlatform); }
+    const selectedRange = localStorage.getItem("selectedDateRange") || "7days";
+    updateDashboardDataByRange(savedPlatform, selectedRange);
+    createChart(savedPlatform);
+    updatePlatformPerformance(savedPlatform);
+    updateSentimentChart(savedPlatform);
+    updateConnectedAccounts({ platform: savedPlatform, username: savedUsername });
+    updateNotifications(savedPlatform);
+    updatePostingTimeChart(savedPlatform);
+    updateRecentPosts(savedPlatform);
+  } else {
+    setDashboardEmptyState();
+  }
+};
+
+const accountData = {
+  Instagram: { username: "@sociallytic.official", icon: "fa-instagram", color: "text-purple-600" },
+  TikTok: { username: "@sociallyticmedia", icon: "fa-tiktok", color: "text-slate-900" },
+  Facebook: { username: "Sociallytic Official", icon: "fa-facebook", color: "text-blue-600" },
+  "X": { username: "@sociallyticx", icon: "fa-x-twitter", color: "text-slate-900" }
+};
+
+function getUsernameInitials(username) {
+  const cleaned = username.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+  return cleaned.slice(0, 2) || "US";
+}
+
+function getPlatformIcon(platform) {
+  switch (platform) {
+    case "Instagram": return "fa-instagram text-purple-600";
+    case "TikTok": return "fa-tiktok text-slate-900";
+    case "Facebook": return "fa-facebook text-blue-600";
+    case "X": return "fa-x-twitter text-slate-900";
+    default: return "fa-user text-slate-700";
+  }
+}
+
+function updateConnectedAccounts(platforms) {
+  const list = document.getElementById("connectedAccountsList");
+  list.innerHTML = "";
+  const platformList = Array.isArray(platforms) ? platforms : [platforms];
+
+  platformList.forEach(entry => {
+    const platform = typeof entry === "object" ? entry.platform : entry;
+    const username = typeof entry === "object" && entry.username ? entry.username : accountData[platform]?.username || "@username";
+    const account = accountData[platform];
+    if (!account) return;
+
+    const initials = getUsernameInitials(username);
+    const avatar = `<div class="w-10 h-10 rounded-xl flex items-center justify-center border border-slate-100 shadow-sm bg-white text-slate-900 font-bold">${initials}</div>`;
+
+    const div = document.createElement("div");
+    div.className = "bg-slate-50/50 border border-slate-100 rounded-2xl p-5 card-shadow";
+    div.innerHTML = `
+      <div class="flex items-center gap-3 mb-4">
+        ${avatar}
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm">${platform}</h3>
+          <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Online</p>
+        </div>
+      </div>
+      <div class="bg-white border border-slate-100 rounded-xl p-2.5 text-xs font-semibold text-slate-700 text-center shadow-sm">
+        ${username}
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+const notificationData = {
+  Instagram: ["🎉 Instagram engagement reached 48.2K", "🚀 Instagram followers up 12.5%", "📸 Your latest Reel asset trends well"],
+  TikTok: ["🎉 TikTok views crossed 1.2M logs", "🚀 TikTok engagement up by 18.7%", "🎵 Trending sound track active node"],
+  Facebook: ["🎉 Facebook core page reach up index", "⚠️ Facebook engagement dropped 2.1%", "💬 Review statements node updates"],
+  "X": ["🎉 X impressions metrics cleared 320.8K", "🔁 Thread sequence re-routed logs", "💬 System cluster replies update stack"]
+};
+
+function updateNotifications(platform) {
+  const list = document.getElementById("notificationList");
+  const data = notificationData[platform];
+  if (!list || !data) return;
+  list.innerHTML = "";
+
+  data.forEach(item => {
+    list.innerHTML += `
+      <div class="bg-slate-50 border border-slate-100/70 p-3 rounded-xl text-xs text-slate-700 font-medium">
+        ${item}
+      </div>
+    `;
+  });
+}
+
+let postingTimeChart;
+const postingTimeData = { Instagram: [20, 45, 70, 95, 85], TikTok: [30, 55, 80, 100, 90], Facebook: [40, 65, 75, 60, 50], "X": [55, 80, 90, 70, 60] };
+
+function updatePostingTimeChart(platform) {
+  const data = postingTimeData[platform];
+  if (!data) return;
+  if (postingTimeChart) { postingTimeChart.destroy(); }
+
+  postingTimeChart = new Chart(document.getElementById("postingTimeChart"), {
+    type: "bar",
+    data: {
+      labels: ["8AM", "12PM", "4PM", "8PM", "10PM"],
+      datasets: [{ label: "Audience Density Activity Metric %", data: data, backgroundColor: "#a855f7", borderRadius: 6 }]
+    }
+  });
+}
+
+function searchRecentPosts() {
+  const keyword = document.getElementById("postSearchInput").value.toLowerCase();
+  const platform = localStorage.getItem("connectedPlatform") || "Instagram";
+  const data = recentPostsData[platform];
+  const filteredPosts = data.filter(post => post.title.toLowerCase().includes(keyword) || post.type.toLowerCase().includes(keyword));
+  renderRecentPosts(filteredPosts);
+}
+
+function renderRecentPosts(posts) {
+  const list = document.getElementById("recentPostsList");
+  list.innerHTML = "";
+
+  if (posts.length === 0) {
+    list.innerHTML = `<div class="col-span-full text-center text-slate-400 py-10 text-sm font-medium"><i class="fa-solid fa-folder-open mb-2 text-xl block"></i> No matching properties arrays discovered.</div>`;
+    return;
+  }
+
+  posts.forEach(post => {
+    list.innerHTML += `
+      <div class="bg-slate-50/50 border border-slate-100 rounded-2xl overflow-hidden card-shadow flex flex-col justify-between">
+        <div class="h-32 bg-slate-200/60 flex items-center justify-center text-slate-400 text-3xl">
+          <i class="fa-regular fa-image"></i>
+        </div>
+        <div class="p-4">
+          <span class="bg-white border border-slate-100 text-purple-700 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm">
+            ${post.type}
+          </span>
+          <h3 class="font-bold text-slate-900 text-sm my-2.5 line-clamp-1">${post.title}</h3>
+          <div class="flex items-center gap-4 text-xs text-slate-500 font-semibold border-t border-slate-100 pt-2.5">
+            <span><i class="fa-regular fa-heart mr-1"></i> ${post.engagement}</span>
+            <span><i class="fa-regular fa-eye mr-1"></i> ${post.views}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function exportReport() {
+  const platform = localStorage.getItem("connectedPlatform") || "No platform connected";
+  const followers = document.getElementById("followersValue").innerText;
+  const engagement = document.getElementById("engagementValue").innerText;
+  const views = document.getElementById("viewsValue").innerText;
+  const posts = document.getElementById("postsValue").innerText;
+
+  const report = `SOCIALYTIC PERFORMANCE LEDGER\nConnected Platform: ${platform}\nTotal Followers: ${followers}\nTotal Engagement: ${engagement}\nTotal Views: ${views}\nTotal Posts: ${posts}`;
+  const blob = new Blob([report], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "sociallytic-report.txt";
+  link.click();
+}
+
+function toggleDarkMode() {
+  document.body.classList.toggle("dark-mode");
+  const isDark = document.body.classList.contains("dark-mode");
+  localStorage.setItem("darkMode", isDark);
+}
+</script>
+
+<script>
+ LeviatNode: 
+(function () {
+  if (!window.chatbase || window.chatbase("getState") !== "initialized") {
+    window.chatbase = (...args) => {
+      if (!window.chatbase.q) {
+        window.chatbase.q = [];
+      }
+      window.chatbase.q.push(args);
+    };
+
+    window.chatbase = new Proxy(window.chatbase, {
+      get(target, prop) {
+        if (prop === "q") {
+          return target.q;
+        }
+
+        return (...args) => target(prop, ...args);
+      }
+    });
+  }
+
+  const onLoad = function () {
+    const script = document.createElement("script");
+    script.src = "https://www.chatbase.co/embed.min.js";
+    script.id = "nsWWW45T05i9DqxB0s6y6";
+    script.domain = "www.chatbase.co";
+    document.body.appendChild(script);
+  };
+
+  if (document.readyState === "complete") {
+    onLoad();
+  } else {
+    window.addEventListener("load", onLoad);
+  }
+})();
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAhAW-bYH2zbc8ceA1R4GEYXsuQA9pMDkg",
+  authDomain: "sociallytics-3cda3.firebaseapp.com",
+  projectId: "sociallytics-3cda3",
+  storageBucket: "sociallytics-3cda3.firebasestorage.app",
+  messagingSenderId: "781655894147",
+  appId: "1:781655894147:web:280397e6526f62e995d3b6",
+  measurementId: "G-BW15B45JVW"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+let currentUser = null;
+
+onAuthStateChanged(auth, function(user) {
+  if (user) {
+    currentUser = user;
+    console.log("Logged in user:", user.email);
+    const savedPlatform = localStorage.getItem("connectedPlatform");
+    if (savedPlatform) { window.loadPlatformFromFirebase(savedPlatform); }
+  } else {
+    alert("Please login first.");
+    window.location.href = "login.html";
+  }
+});
+
+console.log("Firebase Connected Successfully");
+
+window.savePlatformToFirebase = async function(platform) {
+  try {
+    if (!currentUser) { alert("User not logged in."); return; }
+    await setDoc(doc(db, "users", currentUser.uid, "platforms", platform), {
+      platform: platform,
+      connected: true,
+      followers: Math.floor(Math.random() * 100000),
+      engagement: Math.floor(Math.random() * 50000),
+      views: Math.floor(Math.random() * 1000000),
+      posts: Math.floor(Math.random() * 500) + 1,
+      createdAt: new Date()
+    });
+    console.log(platform + " saved to Firebase");
+  } catch(error) { console.error("Firebase save error:", error); }
+};
+
+window.loadPlatformFromFirebase = async function(platform) {
+  try {
+    if (!currentUser) { console.log("User not ready yet"); return; }
+    const docRef = doc(db, "users", currentUser.uid, "platforms", platform);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      document.getElementById("followersValue").innerText = data.followers;
+      document.getElementById("engagementValue").innerText = data.engagement;
+      document.getElementById("viewsValue").innerText = data.views;
+      document.getElementById("postsValue").innerText = data.posts;
+      document.getElementById("connectedPlatformText").innerText = "Connected Platform: " + data.platform;
+      console.log(platform + " data loaded from Firebase");
+    } else { console.log("No Firebase data found for " + platform); }
+  } catch(error) { console.error("Firebase read error:", error); }
+};
+
+window.registerUser = async function(email, password) {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    alert("Account registered successfully!");
+  } catch (error) { alert(error.message); }
+};
+
+window.loginUser = async function(email, password) {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    alert("Login successfully!");
+    window.location.href = "dashboard.html";
+  } catch (error) { alert(error.message); }
+};
+
+window.addScheduledPost = function() {
+  const title = document.getElementById("scheduleTitle").value;
+  const platform = document.getElementById("schedulePlatform").value;
+  const time = document.getElementById("scheduleTime").value;
+  const list = document.getElementById("scheduledPostList");
+
+  if (!title || !time) { alert("Please fill in post title and schedule time."); return; }
+
+  const postDiv = document.createElement("div");
+  postDiv.className = "flex items-center justify-between bg-slate-50 border border-slate-100 p-4 rounded-xl shadow-sm";
+  postDiv.innerHTML = `
+    <div>
+      <h3 class="font-bold text-slate-800 text-sm">${title}</h3>
+      <p class="text-xs text-slate-500 mt-0.5">${platform} • ${time}</p>
+    </div>
+    <span class="bg-purple-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm">Scheduled</span>
+  `;
+  list.appendChild(postDiv);
+  document.getElementById("scheduleTitle").value = "";
+  document.getElementById("scheduleTime").value = "";
+}
+</script>
+
+</body>
+</html>
